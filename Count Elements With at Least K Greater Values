@@ -1,0 +1,67 @@
+/* You are given an integer array nums of length n and an integer k.
+
+An element in nums is said to be qualified if there exist at least k elements in the array that are strictly greater than it.
+
+Return an integer denoting the total number of qualified elements in nums.
+
+ 
+
+Example 1:
+
+Input: nums = [3,1,2], k = 1
+
+Output: 2
+
+Explanation:
+
+The elements 1 and 2 each have at least k = 1 element greater than themselves.
+​​​​​​​No element is greater than 3. Therefore, the answer is 2.
+
+Example 2:
+
+Input: nums = [5,5,5], k = 2
+
+Output: 0
+
+Explanation:
+
+Since all elements are equal to 5, no element is greater than the other. Therefore, the answer is 0.
+
+ 
+
+Constraints:
+
+1 <= n == nums.length <= 105
+1 <= nums[i] <= 109
+0 <= k < n  */
+
+
+class Solution {
+public:
+    int countElements(vector<int>& nums, int k) {
+        if(nums.empty()) return 0;
+        sort(nums.begin(), nums.end());
+        vector<int> v;
+        v.push_back(nums[0]);
+        for(int i = 1; i < nums.size(); i++){
+            if(nums[i] != nums[i-1]){
+                v.push_back(nums[i]);
+            }
+        }
+        int m = v.size();
+        unordered_map<int,int> freq;
+        for(int x : nums) freq[x]++;
+        vector<int> suffix(m, 0);
+        suffix[m-1] = 0;
+        for(int i = m-2; i >= 0; i--){
+            suffix[i] = suffix[i+1] + freq[v[i+1]];
+        }
+        int count = 0;
+        for(int i = 0; i < m; i++){
+            if(suffix[i] >= k){
+                count += freq[v[i]];
+            }
+        }
+        return count;
+    }
+};
